@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+<!-- Title on the Browser tab -->
+{% block title %} Add Patient {% endblock title %}
+
+<!-- Navbar content (icon + title) -->
+{% block nav-content %}
+<i class="fas fa-user-plus"></i>&nbsp;&nbsp; Add Patient
+{% endblock nav-content %}
+
+<!-- TIME -->
+{% block time %}
+<div class="col-sm">
+<center>
+    <span id="clock" style="color: #89cff0;"></span>
+</center>
+</div>
+{% endblock time %}
+
+<!-- Button in navbar -->
+{% block btn-nav %}
+<div class="text-light" id="sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+    <i class="fas fa-bars"></i>
+</div>
+{% endblock btn-nav %}
+
+
+<!-- Sidebar -->
+{% block body-sidebar %}
+<div class="d-grid gap-2">
+    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
+    {% if request.user.is_superuser %}
+    <a href="{% url 'admin:index' %}" target="_blank" class="btn btn-outline-primary btn-sm mb-3">Admin</a>
+    {% else %}
+    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#supportModal">Support</button>
+    {% endif %}
+</div>
+{% endblock body-sidebar %}
+
+<!-- Footer (color) -->
+{% block footer %} style="color: #89cff0; text-decoration: none;" {% endblock footer %}
+
+<!-- Page content -->
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card card-body border-dark text-primary mt-5">
+                <span class="text-center txt-sm" id="card-title">{% block card-title %} FILL OUT THE FORM BELOW {% endblock card-title %}</span>
+            </div>
+            <form {% block Action %} action="/add_patient" {% endblock Action %} method="POST" autocomplete="off" enctype="multipart/form-data" class="card p-3 border-dark mt-3">
+                {% csrf_token %}
+
+                <!-- ====== Block Id hidden here ====== -->
+                {% block Value-id %} {% endblock Value-id %}
+
+                <div class="input-group mb-3">
+                    <span class="side-label btn border-secondary bg-light txt-sm"><i class="fas fa-user-alt"></i></span>
+                    <input type="text" class="form-control" name="name" id="name" maxlength="40" placeholder="First and Last name" {% block Value-name %} {% endblock Value-name %}>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="side-label btn border-secondary bg-light txt-sm"><i class="fas fa-phone-alt"></i></span>
+                    <input type="text" class="form-control" name="phone" id="phone" placeholder="Patient phone" {% block Value-phone %} {% endblock Value-phone %}>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="side-label btn border-secondary bg-light txt-sm"><i class="fas fa-envelope"></i></span>
+                    <input type="text" class="form-control" name="email" id="email" maxlength="40" placeholder="Patient email" {% block Value-email %} {% endblock Value-email %}>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="side-label btn border-secondary bg-light txt-sm"><i class="fab fa-creative-commons-by"></i></span>
+                    <input type="text" class="form-control" name="age" id="age" maxlength="3" placeholder="Patient age" {% block Value-age %} {% endblock Value-age %}>
+                </div>
+                <div class="input-group mb-3">
+                    <label><span class="side-label btn border-secondary bg-light txt-sm" style="border-radius: 4px 0px 0px 4px;"><i class="fas fa-child"></i></span></label>
+                    <select class="form-select" name="gender" id="gender">
+                        {% block option %}
+                        <option value="" hidden>Select the gender</option>
+                        {% endblock option %}
+                        <option disabled></option>
+                        <option>M</option>
+                        <option>F</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control txt-sm" name="note" rows="7" placeholder="Description is optional...">{% block note %}{% endblock note %}</textarea>
+                </div>
+
+                <!-- Desktop & Tablet mode (buttons) -->
+                <div id="btn-desktop" class="mt-4" style="width: 100%;">
+                    <button type="submit" class="btn btn-outline-primary mb-3 btn-add">
+                        {% block Btn-content1 %}
+                        <i class="fas fa-plus"></i>&nbsp;&nbsp; Add Patient
+                        {% endblock Btn-content1 %}
+                    </button>
+                    <a href="{% url 'backend' %}" class="btn btn-outline-dark mb-3 ms-2" style="width: 50px;" title="Back">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <button type="reset" class="btn btn-outline-secondary mb-3 ms-2" style="width: 50px;" title="Reset">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Smartphone mode (buttons) -->
+                <div id="btn-smartphone">
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm txt-sm btn-add">
+                            {% block Btn-content2 %}
+                            <i class="fas fa-plus"></i>&nbsp;&nbsp; Add
+                            {% endblock Btn-content2 %}
+                        </button>
+
+                        <a href="{% url 'backend' %}" class="btn btn-dark btn-sm txt-sm"><i class="fas fa-chevron-left"></i>&nbsp;&nbsp; Back</a>
+
+                        <button type="reset" class="btn btn-secondary btn-sm txt-sm"><i class="fas fa-sync-alt"></i>&nbsp;&nbsp; Reset</button>
+                    </div>
+                </div>
+
+                <!-- ID Hidden (denied here) -->
+                {% block Id-hidden %}{% endblock Id-hidden %}
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Message from backend -->
+{% for message in messages %}
+    {% if message.tags == 'error' %}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        var m = "{{ message }}";
+        swal("Denied !", m, "error")
+    </script>
+    {% endif %}
+{% endfor %}
+
+<br><br><br>
+{% endblock content %}
